@@ -1,0 +1,25 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Security Guard Core",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/Security_guard.py",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Dashboard: Flask",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/dashboard_flask.py",
+      "console": "integratedTerminal"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Core + Flask Dashboard",
+      "configurations": ["Security Guard Core", "Dashboard: Flask"]
+    }
+  ]
+}
