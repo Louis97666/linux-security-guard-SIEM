@@ -97,6 +97,22 @@ class FollowTest(unittest.TestCase):
             next(lines)
 
 
+class EventTest(unittest.TestCase):
+    def test_log_records_carry_event_and_ip(self):
+        g = sg.Guard(2, 60, lambda ip: sg.block_ip(ip, dry_run=True))
+        with self.assertLogs("security_guard", "INFO") as logs:
+            g.feed(FAIL, 0)
+            g.feed(FAIL, 1)
+        self.assertEqual([(r.event, r.ip) for r in logs.records],
+                         [("failed", "203.0.113.5"), ("failed", "203.0.113.5"), ("alert", "203.0.113.5"),
+                          ("blocked", "203.0.113.5")])
+
+    def test_failed_block_event(self):
+        with mock.patch.object(sg, "firewall_command", lambda ip: ["definitely-not-a-binary-xyz"]),                 self.assertLogs("security_guard", "ERROR") as logs:
+            sg.block_ip("1.2.3.4")
+        self.assertEqual(logs.records[0].event, "block_failed")
+
+
 class EndToEndTest(unittest.TestCase):
     def test_stdin_dry_run(self):
         audit = os.path.join(tempfile.mkdtemp(), "audit.log")

@@ -27,6 +27,14 @@ SOURCES = {
 LOG_FILES = ("/var/log/auth.log", "/var/log/secure")  # Linux mit klassischem Syslog
 
 
+def event(name, ip):
+    """Strukturierte Zusatzfelder fuer Log-Meldungen, damit Module (GeoIP, SQLite, Cloud) mithoeren koennen.
+
+    Ereignisse: failed, alert, blocked, block_failed (Module ergaenzen eigene, z. B. whitelisted).
+    """
+    return {"extra": {"event": name, "ip": ip}}
+
+
 def parse(line):
     """Angreifer-IP eines fehlgeschlagenen Logins, sonst None."""
     if FAILURE.search(line):
@@ -56,9 +64,9 @@ class Guard:
         hits.append(now)
         while now - hits[0] >= self.window:
             hits.popleft()
-        log.warning("Fehlgeschlagener Login von %s (%d/%d)", ip, len(hits), self.limit)
+        log.warning("Fehlgeschlagener Login von %s (%d/%d)", ip, len(hits), self.limit, **event("failed", ip))
         if len(hits) >= self.limit:
-            log.critical("[ALARM] Schwellenwert fuer %s ueberschritten - starte Eindaemmung", ip)
+            log.critical("[ALARM] Schwellenwert fuer %s ueberschritten - starte Eindaemmung", ip, **event("alert", ip))
             del self.hits[ip]
             if self.block(ip):
                 self.blocked.add(ip)
@@ -87,9 +95,10 @@ def block_ip(ip, dry_run=False):
         if not dry_run:
             subprocess.run(cmd, capture_output=True, text=True, check=True, timeout=30)
     except (OSError, subprocess.SubprocessError) as e:
-        log.error("[FEHLER] Konnte %s nicht sperren: %s", ip, (getattr(e, "stderr", None) or str(e)).strip())
+        log.error("[FEHLER] Konnte %s nicht sperren: %s", ip, (getattr(e, "stderr", None) or str(e)).strip(),
+                  **event("block_failed", ip))
         return False
-    log.critical("[%s] %s", "DRY-RUN" if dry_run else "CONTAINMENT", " ".join(cmd))
+    log.critical("[%s] %s", "DRY-RUN" if dry_run else "CONTAINMENT", " ".join(cmd), **event("blocked", ip))
     return True
 
 
