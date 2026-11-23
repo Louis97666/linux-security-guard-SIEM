@@ -1,0 +1,18 @@
+# Streamlit-Einstellungen fuer das Security-Guard-Dashboard
+
+[server]
+address = "127.0.0.1"   # nur vom eigenen Rechner erreichbar: das Dashboard hat keine Anmeldung
+headless = true         # keine Rueckfrage nach einer E-Mail-Adresse beim ersten Start
+
+[browser]
+gatherUsageStats = false  # keine Nutzungsstatistik an Streamlit senden
+
+[theme]
+base = "dark"
+primaryColor = "#7d9ef5"
+backgroundColor = "#10151c"
+secondaryBackgroundColor = "#18202a"
+textColor = "#e4e8ef"
+
+[client]
+toolbarMode = "viewer"    # keine Entwickler-Knoepfe wie "Deploy" in der Werkzeugleiste
