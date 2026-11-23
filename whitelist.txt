@@ -1,5 +1,7 @@
-# Interne Admin-IPs und Localhost für den Security Guard
-127.0.0.1
-::1
-192.168.1.50
-10.0.0.99
+# Security Guard Whitelist: diese Adressen werden nie gezaehlt und nie gesperrt.
+# Erlaubt sind einzelne IPs (IPv4/IPv6) und ganze Netze in CIDR-Schreibweise.
+# Kommentare mit '#', auch am Zeilenende. Aenderungen gelten sofort, ohne Neustart.
+# Loopback (127.0.0.1, ::1) ist immer geschuetzt und muss nicht eingetragen werden.
+
+192.168.1.50      # Admin-Workstation
+10.0.0.99         # Jump-Host
