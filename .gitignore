@@ -1,0 +1,10 @@
+# Laufzeitdaten des Security Guard - gehoeren nie ins Repo
+incident_audit.log
+*.db
+*.db-wal
+*.db-shm
+
+# Python
+__pycache__/
+*.pyc
+.venv/
